@@ -16,7 +16,7 @@ object JDBC {
 
     implicit val session: AutoSession.type = AutoSession
 
-    sql"""CREATE TABLE IF NOT EXISTS arbeitgeber (id serial not null primary key, title varchar(64), created_at timestamp not null)""".execute.apply()
+    sql"""CREATE TABLE IF NOT EXISTS arbeitgeber (id serial not null primary key, title varchar(64))""".execute.apply()
 
     val insertActor: ActorRef = system.actorOf(Props[InsertActor], "insertActor")
     insertActor ! Arbeitgeber("Sbertech")

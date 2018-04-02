@@ -17,3 +17,6 @@ libraryDependencies ++= {
     "org.postgresql" % "postgresql" % "42.1.4"
   )
 }
+
+unmanagedJars in Compile += file("lib/ojdbc8.jar")
+unmanagedJars in Compile += file("lib/ucp.jar")
