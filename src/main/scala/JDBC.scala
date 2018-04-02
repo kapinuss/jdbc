@@ -8,18 +8,18 @@ case class Arbeitgeber(title: String)
 object JDBC {
 
   ConnectionPool.singleton(url, user, password, poolSettings)
+  implicit val session: AutoSession.type = AutoSession
+  implicit val system: ActorSystem = ActorSystem()
+  implicit val mat: ActorMaterializer = ActorMaterializer()
 
   def main(args: Array[String]): Unit = {
-
-    implicit val system: ActorSystem = ActorSystem()
-    implicit val mat: ActorMaterializer = ActorMaterializer()
-
-    implicit val session: AutoSession.type = AutoSession
 
     sql"""CREATE TABLE IF NOT EXISTS arbeitgeber (id serial not null primary key, title varchar(64))""".execute.apply()
 
     val insertActor: ActorRef = system.actorOf(Props[InsertActor], "insertActor")
-    insertActor ! Arbeitgeber("Sbertech")
+    val deleteActor: ActorRef = system.actorOf(Props[DeleteActor], "deleteActor")
+    insertActor ! Arbeitgeber("WithActor")
+    deleteActor ! 3
 
   }
 }
