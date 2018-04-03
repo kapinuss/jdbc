@@ -14,12 +14,17 @@ object JDBC {
 
   def main(args: Array[String]): Unit = {
 
-    sql"""CREATE TABLE IF NOT EXISTS arbeitgeber (id serial not null primary key, title varchar(64))""".execute.apply()
+    val host: String = Config.getString("http.host")
+    val port: Int = Config.getInt("http.port")
+
+    //sql"""CREATE TABLE IF NOT EXISTS arbeitgeber (id serial not null primary key, title varchar(64))""".execute.apply()
 
     val insertActor: ActorRef = system.actorOf(Props[InsertActor], "insertActor")
     val deleteActor: ActorRef = system.actorOf(Props[DeleteActor], "deleteActor")
-    insertActor ! Arbeitgeber("WithActor")
-    deleteActor ! 3
+    val countActor: ActorRef = system.actorOf(Props[CountActor], "countActor")
+
+    //insertActor ! Arbeitgeber("GP")
+    countActor ! "PERSONS"
 
   }
 }
