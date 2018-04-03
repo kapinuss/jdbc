@@ -14,9 +14,6 @@ object JDBC {
 
   def main(args: Array[String]): Unit = {
 
-    val host: String = Config.getString("http.host")
-    val port: Int = Config.getInt("http.port")
-
     //sql"""CREATE TABLE IF NOT EXISTS arbeitgeber (id serial not null primary key, title varchar(64))""".execute.apply()
 
     val insertActor: ActorRef = system.actorOf(Props[InsertActor], "insertActor")
