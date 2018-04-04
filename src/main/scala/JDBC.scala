@@ -1,7 +1,11 @@
+import java.io.File
+
 import scalikejdbc._
 import JDBCSettings._
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.ActorMaterializer
+
+import scala.collection.mutable.ArrayBuffer
 
 case class Arbeitgeber(title: String)
 
@@ -21,7 +25,10 @@ object JDBC {
     val countActor: ActorRef = system.actorOf(Props[CountActor], "countActor")
 
     //insertActor ! Arbeitgeber("GP")
-    countActor ! "PERSONS"
+    //countActor ! "PERSONS"
 
+    getSubs(new File("/home/stanislav/Code/")).foreach(println)
   }
+
+  def getSubs(dir: File): List[String] = dir.listFiles.filter(_.isDirectory).map(_.getName).toList
 }
