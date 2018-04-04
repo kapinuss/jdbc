@@ -5,7 +5,7 @@ import JDBCSettings._
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.ActorMaterializer
 
-import scala.collection.mutable.ArrayBuffer
+import scala.io.{BufferedSource, Source}
 
 case class Arbeitgeber(title: String)
 
@@ -27,7 +27,11 @@ object JDBC {
     //insertActor ! Arbeitgeber("GP")
     //countActor ! "PERSONS"
 
-    getSubs(new File("/home/stanislav/Code/")).foreach(println)
+    //getSubs(new File("/home/stanislav/Code/")).foreach(println)
+    //val file: File = new File(getClass.getResource("/examples.csv").getPath)
+    val xml = io.Source.fromFile("/home/stanislav/Code/notification.txt").mkString
+
+    println(xml)
   }
 
   def getSubs(dir: File): List[String] = dir.listFiles.filter(_.isDirectory).map(_.getName).toList
