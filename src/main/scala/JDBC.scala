@@ -27,12 +27,17 @@ object JDBC {
     //insertActor ! Arbeitgeber("GP")
     //countActor ! "PERSONS"
 
-    //getSubs(new File("/home/stanislav/Code/")).foreach(println)
+    val subs: List[String] = getSubs(new File("/home/stanislav/newfolder"))
     //val file: File = new File(getClass.getResource("/examples.csv").getPath)
-    val xml = io.Source.fromFile("/home/stanislav/Code/notification.txt").mkString
 
-    println(xml)
+    subs.foreach(printText)
   }
 
   def getSubs(dir: File): List[String] = dir.listFiles.filter(_.isDirectory).map(_.getName).toList
+
+  def printText (dir: String): Unit = {
+    val source: BufferedSource = io.Source.fromFile(s"/home/stanislav/newfolder/$dir/notification.xml", "windows-1251")
+    val xml: String = try source.mkString finally source.close()
+    println(xml)
+  }
 }
