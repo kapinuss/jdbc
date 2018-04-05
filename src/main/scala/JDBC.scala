@@ -27,9 +27,6 @@ object JDBC {
 
     system.scheduler.schedule(2 seconds, 5 seconds, dirManActor, "test")
 
-    //insertActor ! Arbeitgeber("GP")
-    //countActor ! "PERSONS"
-
     val subs: List[String] = getSubs(new File("/home/stanislav/newfolder"))
     subs.foreach(sub => XMLUtils.parseXML(getTextFromFile(sub)))
   }
