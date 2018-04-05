@@ -28,16 +28,14 @@ object JDBC {
     //countActor ! "PERSONS"
 
     val subs: List[String] = getSubs(new File("/home/stanislav/newfolder"))
-    //val file: File = new File(getClass.getResource("/examples.csv").getPath)
-
-    subs.foreach(printText)
+    subs.foreach(sub => XMLUtils.parseXML(getTextFromFile(sub)))
   }
 
   def getSubs(dir: File): List[String] = dir.listFiles.filter(_.isDirectory).map(_.getName).toList
 
-  def printText (dir: String): Unit = {
+  def getTextFromFile(dir: String): String = {
     val source: BufferedSource = io.Source.fromFile(s"/home/stanislav/newfolder/$dir/notification.xml", "windows-1251")
     val xml: String = try source.mkString finally source.close()
-    println(xml)
+    xml
   }
 }

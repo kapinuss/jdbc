@@ -1,32 +1,31 @@
 import org.json4s.Xml.toJson
 import org.json4s.jackson.Serialization
-import org.json4s.{Formats, NoTypeHints}
+import org.json4s.{Formats, JValue, NoTypeHints}
 
 import scala.util.Try
-import scala.xml.XML
+import scala.xml.{Elem, XML}
 
-object XML {
-  /*
+case class Num (`xdms:number`: String, `xdms:date`: String)
+case class Feedback(`xdms:reason`: String, `xdms:comment`: String)
+
+object XMLUtils {
+
+  implicit val formats: Formats = Serialization.formats(NoTypeHints)
+
   def parseXML(rawXML: String): Unit = {
-    implicit val formats: Formats = Serialization.formats(NoTypeHints)
-    val xml = XML.loadString(rawXML.trim().replaceFirst("^([\\W]+)<", "<"))
-    val json = toJson(xml)
-    val action: String = Try((xml \\ "CIP01Rq" \\ "Action").text).toOption.getOrElse("No data")
-    val jv = json \\ "CIP01Rq" \\ "ListOfServiceRequest" \\ "ServiceRequest"
-    val data = jv.extract[SiebelData]
-    val resultFromSiebel = if (data.SRThematicCode == ""
-      && data.Channel == "Email"
-      && data.EmailToAddress.isDefined)
-      data.copy(SRThematicCode = emailToDep(data.EmailToAddress.get))
-    else
-      data
-    val tiers = Try(xml \\ "CIP01Rq" \\ "ListOfServiceRequest" \\ "ServiceRequest" \\ "ListOfRequesters" \\ "Requester" \\ "TierLevel")
-      .toOption.get.map(x => x.text)
-    val topCard = if (tiers.isEmpty) "NONE" else if (tiers.contains("PLATINUM")) "PLATINUM" else if (tiers.contains("GOLD")) "GOLD" //todo переписать на матч кейс
-    else if (tiers.contains("SILVER")) "SILVER" else if (tiers.contains("BASIC")) "BASIC" else "NONE"
-    (action, resultFromSiebel, topCard)
+    val json = toJson(XML.loadString(rawXML.trim))
+    val accepted: Boolean = (json \\ "xdms:documentAccepted").children.nonEmpty
+    if (accepted) println("Принято")
+    val refused: Boolean = (json \\ "xdms:documentRefused").children.nonEmpty
+    if (refused) println("Отклонено")
+    val ggeNumber = (json \\ "xdms:foundation" \\ "xdms:num").extract[Num]
+    val minstroyNumber = if (accepted) (json \\ "xdms:foundation" \\ "xdms:num").extract[Num]
+    val reason = if (refused) (json \\ "xdms:reason").extract[String]
+    val comment = if (refused) (json \\ "xdms:comment").extract[String]
+    println("Причина: " + reason + "\nКомментарий: " + comment)
+    println("ggeNumber " + ggeNumber)
   }
-  */
+
 
   val accepted: String =
     """
