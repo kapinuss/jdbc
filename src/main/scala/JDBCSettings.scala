@@ -1,7 +1,7 @@
 import scalikejdbc.{ConnectionPoolSettings, GlobalSettings, LoggingSQLAndTimeSettings}
 
 object JDBCSettings {
-  GlobalSettings.loggingSQLAndTime = new LoggingSQLAndTimeSettings(
+  GlobalSettings.loggingSQLAndTime = LoggingSQLAndTimeSettings(
     enabled = true,
     singleLineMode = true,
     logLevel = 'DEBUG

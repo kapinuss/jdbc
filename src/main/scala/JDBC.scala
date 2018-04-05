@@ -5,7 +5,7 @@ import JDBCSettings._
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.ActorMaterializer
 
-import scala.io.{BufferedSource, Source}
+import scala.io.BufferedSource
 
 case class Arbeitgeber(title: String)
 
