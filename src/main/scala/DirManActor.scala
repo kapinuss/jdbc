@@ -1,7 +1,9 @@
 import java.io.File
 
 import akka.actor.Actor
+import scalikejdbc._
 import scala.io.BufferedSource
+import JDBC.session
 
 class DirManActor extends Actor {
 
@@ -11,7 +13,11 @@ class DirManActor extends Actor {
   val dir: String = Config.getString("dir.documents")
 
   override def preStart(): Unit = {
-    println("DirManActor started.")
+    val titles = DB readOnly { implicit session =>
+      sql"SELECT title FROM SUBDIR".map(rs => rs.string("title")).list.apply()
+    }
+    println(s"В базе хранятся данные про ${titles.size} папок.")
+    allDirs = titles
   }
 
   def receive: PartialFunction[Any, Unit] = {
