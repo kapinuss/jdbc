@@ -1,4 +1,3 @@
-import java.io.File
 import scalikejdbc._
 import JDBCSettings._
 import akka.actor.{ActorRef, ActorSystem, Props}
@@ -25,13 +24,8 @@ object JDBC {
     val countActor: ActorRef = system.actorOf(Props[CountActor], "countActor")
     val dirManActor: ActorRef = system.actorOf(Props[DirManActor], "dirManActor")
 
-    system.scheduler.schedule(2 seconds, 5 seconds, dirManActor, "test")
-
-    val subs: List[String] = getSubs(new File("/home/stanislav/newfolder"))
-    subs.foreach(sub => XMLUtils.parseXML(getTextFromFile(sub)))
+    system.scheduler.schedule(2 seconds, 5 seconds, dirManActor, "heartBeat")
   }
-
-  def getSubs(dir: File): List[String] = dir.listFiles.filter(_.isDirectory).map(_.getName).toList
 
   def getTextFromFile(dir: String): String = {
     val source: BufferedSource = io.Source.fromFile(s"/home/stanislav/newfolder/$dir/notification.xml", "windows-1251")
