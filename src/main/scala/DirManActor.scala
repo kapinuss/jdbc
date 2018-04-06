@@ -22,17 +22,13 @@ class DirManActor extends Actor {
 
   def receive: PartialFunction[Any, Unit] = {
     case message: String =>
-      println(message)
       val subs: List[String] = getSubs(new File(dir))
       diffDirs = subs.diff(allDirs)
-      println(s"diffDirs $diffDirs")
       allDirs = subs
-      println(s"allDirs $allDirs")
-
       diffDirs.foreach(sub => {
         println(sub)
         val notification = XMLUtils.parseXML(getTextFromFile(sub))
-        saveSub(sub)
+        saveSub(sub,notification)
       })
   }
 
@@ -48,8 +44,12 @@ class DirManActor extends Actor {
     fileContent
   }
 
-  def saveSub(sub: String): Unit = sql"""INSERT INTO SUBDIR values ($sub, 2)""".execute.apply()
-
+  def saveSub(sub: String, notification: Notification): Unit = notification match {
+    case Notification(true,_,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 1)""".execute.apply ()
+    case Notification(_,true,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 0)""".execute.apply ()
+    case Notification(false,false,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 2)""".execute.apply ()
+    case _ =>
+  }
   def saveNotification(not: Notification): AnyVal = not.accepted match{
     case true => sql"""begin pkg_sedo.set_sedo_registered ('${not.ggeNumber.`xdms:number`}', '${not.ggeNumber.`xdms:date`}', '${not.minstroyNumber.`xdms:number`}', '${not.minstroyNumber.`xdms:date`}' end;""".execute.apply()
     case false =>
