@@ -2,7 +2,6 @@ import scalikejdbc._
 import JDBCSettings._
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.ActorMaterializer
-import scala.io.BufferedSource
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
