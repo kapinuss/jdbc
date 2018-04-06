@@ -27,9 +27,5 @@ object JDBC {
     system.scheduler.schedule(2 seconds, 5 seconds, dirManActor, "heartBeat")
   }
 
-  def getTextFromFile(dir: String): String = {
-    val source: BufferedSource = io.Source.fromFile(s"/home/stanislav/newfolder/$dir/notification.xml", "windows-1251")
-    val xml: String = try source.mkString finally source.close()
-    xml
-  }
+
 }
