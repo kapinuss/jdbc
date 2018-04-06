@@ -17,7 +17,7 @@ object JDBC {
 
   def main(args: Array[String]): Unit = {
 
-    //sql"""CREATE TABLE IF NOT EXISTS arbeitgeber (id serial not null primary key, title varchar(64))""".execute.apply()
+    //sql"""CREATE TABLE Subdir(title varchar2(200) not null, usefull boolean) CONSTRAINT title PRIMARY KEY (title);""".execute.apply()
 
     val insertActor: ActorRef = system.actorOf(Props[InsertActor], "insertActor")
     val deleteActor: ActorRef = system.actorOf(Props[DeleteActor], "deleteActor")

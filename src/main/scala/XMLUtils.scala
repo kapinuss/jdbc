@@ -14,14 +14,14 @@ object XMLUtils {
   def parseXML(rawXML: String): Unit = if (rawXML.nonEmpty) {
     val json = toJson(XML.loadString(rawXML.trim))
     val accepted: Boolean = (json \\ "xdms:documentAccepted").children.nonEmpty
-    //if (accepted) println("Принято")
+    if (accepted) println("Принято")
     val refused: Boolean = (json \\ "xdms:documentRefused").children.nonEmpty
-    //if (refused) println("Отклонено")
+    if (refused) println("Отклонено")
     val ggeNumber = (json \\ "xdms:foundation" \\ "xdms:num").extract[Num]
     val minstroyNumber = if (accepted) (json \\ "xdms:foundation" \\ "xdms:num").extract[Num]
     val reason = if (refused) (json \\ "xdms:reason").extract[String]
     val comment = if (refused) (json \\ "xdms:comment").extract[String]
-    //println("Причина: " + reason + "\nКомментарий: " + comment)
-    //println("ggeNumber " + ggeNumber)
+    println("Причина: " + reason + "\nКомментарий: " + comment)
+    println("ggeNumber " + ggeNumber)
   }
 }
