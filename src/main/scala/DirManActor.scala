@@ -21,7 +21,7 @@ class DirManActor extends Actor {
   }
 
   def receive: PartialFunction[Any, Unit] = {
-    case message: String =>
+    case message: String if message.nonEmpty =>
       val subs: List[String] = getSubs(new File(dir))
       diffDirs = subs.diff(allDirs)
       allDirs = subs
@@ -30,6 +30,7 @@ class DirManActor extends Actor {
         val notification = XMLUtils.parseXML(getTextFromFile(sub))
         saveSub(sub,notification)
       })
+    case _ => println("DirManActor recieved some shit.")
   }
 
   def getSubs(dir: File): List[String] = dir.listFiles.filter(_.isDirectory).map(_.getName).toList
@@ -47,7 +48,7 @@ class DirManActor extends Actor {
   def saveSub(sub: String, notification: Notification): Unit = notification match {
     case Notification(true,_,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 1)""".execute.apply ()
     case Notification(_,true,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 0)""".execute.apply ()
-    case Notification(false,false,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 2)""".execute.apply ()
+    case Notification(false,false,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 2)""".execute.apply () //TODO do we need this insert?
     case _ =>
   }
   def saveNotification(not: Notification): AnyVal = not.accepted match{
