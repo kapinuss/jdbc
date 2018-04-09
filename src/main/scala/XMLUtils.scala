@@ -20,10 +20,8 @@ object XMLUtils {
     val refused: Boolean = (json \\ "xdms:documentRefused").children.nonEmpty
     val ggeNumberRaw = (json \\ "xdms:foundation" \\ "xdms:num").extract[Num]
     val ggeNumber = Num(ggeNumberRaw.`xdms:number`, performDate(ggeNumberRaw.`xdms:date`))
-    println("GGeNum = " + ggeNumber)
     val minstroyNumberRaw = if (accepted) (json \\ "xdms:foundation" \\ "xdms:num").extract[Num] else Num("", "2001-09-11")
     val minstroyNumber = Num(minstroyNumberRaw.`xdms:number`, performDate(minstroyNumberRaw.`xdms:date`))
-    println("MinStroyNum = " + minstroyNumber)
     val reason = if (refused) (json \\ "xdms:reason").extract[String] else ""
     val comment = if (refused) (json \\ "xdms:comment").extract[String] else ""
     Notification(accepted, refused, ggeNumber, minstroyNumber, reason, comment)

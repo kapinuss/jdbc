@@ -48,9 +48,7 @@ class DirManActor extends Actor with akka.actor.ActorLogging {
     case Notification(true,_,_,_,_,_) =>
       println(notification)
       sql"""INSERT INTO SUBDIR values ($sub, 1)""".execute.apply ()
-      //val sql = s"begin pkg_sedo.set_sedo_registered ('${notification.ggeNumber.`xdms:number`}', '${notification.ggeNumber.`xdms:date`}', '${notification.minstroyNumber.`xdms:number`}', '${notification.minstroyNumber.`xdms:date`}' end;"
-      //println(sql)
-      //sql"""$sql""".execute.apply()
+      val sql = s"begin pkg_sedo.set_sedo_registered ('${notification.ggeNumber.`xdms:number`}', '${notification.ggeNumber.`xdms:date`}', '${notification.minstroyNumber.`xdms:number`}', '${notification.minstroyNumber.`xdms:date`}' end;"
     case Notification(_,true,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 0)""".execute.apply ()
     case Notification(false,false,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 2)""".execute.apply () //TODO do we need this insert?
     case _ =>
