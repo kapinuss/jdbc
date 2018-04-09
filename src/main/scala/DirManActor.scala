@@ -27,7 +27,7 @@ class DirManActor extends Actor with akka.actor.ActorLogging {
       diffDirs.foreach(sub => {
         JDBC.system.log.info("Работаем с субдиректорией " + sub)
         val notification: Notification = XMLUtils.parseXML(getTextFromFile(sub))
-        saveSub(sub,notification)
+        saveSub(sub, notification)
       })
     case _ => JDBC.system.log.info("DirManActor recieved some shit.")
   }
@@ -45,14 +45,16 @@ class DirManActor extends Actor with akka.actor.ActorLogging {
   }
 
   def saveSub(sub: String, notification: Notification): Unit = notification match {
-    case Notification(true,_,_,_,_,_) =>
+    case Notification(true, _, _, _, _, _) => {
       println(notification)
-      sql"""INSERT INTO SUBDIR values ($sub, 1)""".execute.apply ()
-      val sql = s"begin pkg_sedo.set_sedo_registered ('${notification.ggeNumber.`xdms:number`}', '${notification.ggeNumber.`xdms:date`}', '${notification.minstroyNumber.`xdms:number`}', '${notification.minstroyNumber.`xdms:date`}' end;"
-    case Notification(_,true,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 0)""".execute.apply ()
-    case Notification(false,false,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 2)""".execute.apply () //TODO do we need this insert?
+      sql"""INSERT INTO subdir VALUES ($sub, 1)""".execute.apply()
+      sql"""INSERT INTO sedo_notifications(ais_docnum, ais_docdate) VALUES (${notification.ggeNumber.`xdms:number`}, ${notification.ggeNumber.`xdms:date`})""".execute.apply()
+    }
+    case Notification(_, true, _, _, _, _) => sql"""INSERT INTO SUBDIR values ($sub, 0)""".execute.apply()
+    case Notification(false, false, _, _, _, _) => sql"""INSERT INTO SUBDIR values ($sub, 2)""".execute.apply() //TODO do we need this insert?
     case _ =>
   }
+
   def saveNotification(not: Notification): AnyVal = not.accepted match {
     case true => sql"""begin pkg_sedo.set_sedo_registered ('${not.ggeNumber.`xdms:number`}', '${not.ggeNumber.`xdms:date`}', '${not.minstroyNumber.`xdms:number`}', '${not.minstroyNumber.`xdms:date`}' end;""".execute.apply()
     case false =>
