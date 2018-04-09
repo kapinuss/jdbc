@@ -5,18 +5,17 @@ import scalikejdbc._
 import scala.io.BufferedSource
 import JDBC.session
 
-class DirManActor extends Actor {
+class DirManActor extends Actor with akka.actor.ActorLogging {
 
   var allDirs: List[String] = List.empty
   var diffDirs: List[String] = List.empty
-
   val dir: String = Config.getString("dir.documents")
 
   override def preStart(): Unit = {
     val titles: List[String] = DB readOnly { implicit session =>
       sql"SELECT title FROM SUBDIR".map(rs => rs.string("title")).list.apply()
     }
-    println(s"В базе хранятся данные про ${titles.size} папок.")
+    JDBC.system.log.info(s"В базе хранятся данные про ${titles.size} папок.")
     allDirs = titles
   }
 
@@ -26,7 +25,7 @@ class DirManActor extends Actor {
       diffDirs = subs.diff(allDirs)
       allDirs = subs
       diffDirs.foreach(sub => {
-        println(sub)
+        JDBC.system.log.info("Работаем с субдиректорией " + sub)
         val notification = XMLUtils.parseXML(getTextFromFile(sub))
         saveSub(sub,notification)
       })
@@ -51,7 +50,7 @@ class DirManActor extends Actor {
     case Notification(false,false,_,_,_,_) => sql"""INSERT INTO SUBDIR values ($sub, 2)""".execute.apply () //TODO do we need this insert?
     case _ =>
   }
-  def saveNotification(not: Notification): AnyVal = not.accepted match{
+  def saveNotification(not: Notification): AnyVal = not.accepted match {
     case true => sql"""begin pkg_sedo.set_sedo_registered ('${not.ggeNumber.`xdms:number`}', '${not.ggeNumber.`xdms:date`}', '${not.minstroyNumber.`xdms:number`}', '${not.minstroyNumber.`xdms:date`}' end;""".execute.apply()
     case false =>
   }

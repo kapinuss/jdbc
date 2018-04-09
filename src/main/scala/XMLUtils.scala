@@ -32,6 +32,4 @@ object XMLUtils {
     val comment = if (refused) (json \\ "xdms:comment").extract[String] else ""
     Notification(accepted, refused, ggeNumber, minstroyNumber, reason, comment)
   } else Notification.apply(false, false, Num("", "2001-09-11"), Num("", "2001-09-11"), "", "")
-
-  //def performDate
 }
