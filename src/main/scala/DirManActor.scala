@@ -46,11 +46,17 @@ class DirManActor extends Actor with akka.actor.ActorLogging {
 
   def saveSub(sub: String, notification: Notification): Unit = notification match {
     case Notification(true, _, _, _, _, _) => {
-      println(notification)
       sql"""INSERT INTO subdir VALUES ($sub, 1)""".execute.apply()
-      sql"""INSERT INTO sedo_notifications(ais_docnum, ais_docdate) VALUES (${notification.ggeNumber.`xdms:number`}, ${notification.ggeNumber.`xdms:date`})""".execute.apply()
+      sql"""INSERT INTO sedo_notifications(ais_docnum, ais_docdate, minstroy_num, minstroy_date) VALUES
+           (${notification.ggeNumber.`xdms:number`}, ${notification.ggeNumber.`xdms:date`},
+        ${notification.minstroyNumber.`xdms:number`}, ${notification.minstroyNumber.`xdms:date`})""".execute.apply()
     }
-    case Notification(_, true, _, _, _, _) => sql"""INSERT INTO SUBDIR values ($sub, 0)""".execute.apply()
+    case Notification(_, true, _, _, _, _) => {
+      sql"""INSERT INTO SUBDIR values ($sub, 0)""".execute.apply()
+      sql"""INSERT INTO sedo_notifications(ais_docnum, ais_docdate, minstroy_reason, p_minstroy_comment) VALUES
+           (${notification.ggeNumber.`xdms:number`}, ${notification.ggeNumber.`xdms:date`},
+        ${notification.reason}, ${notification.comment})""".execute.apply()
+    }
     case Notification(false, false, _, _, _, _) => sql"""INSERT INTO SUBDIR values ($sub, 2)""".execute.apply() //TODO do we need this insert?
     case _ =>
   }
@@ -60,4 +66,3 @@ class DirManActor extends Actor with akka.actor.ActorLogging {
     case false =>
   }
 }
-

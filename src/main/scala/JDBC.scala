@@ -16,8 +16,6 @@ object JDBC {
 
   def main(args: Array[String]): Unit = {
 
-    //sql"""CREATE TABLE Subdir(title varchar2(200) not null, usefull boolean) CONSTRAINT title PRIMARY KEY (title);""".execute.apply()
-
     val insertActor: ActorRef = system.actorOf(Props[InsertActor], "insertActor")
     val deleteActor: ActorRef = system.actorOf(Props[DeleteActor], "deleteActor")
     val countActor: ActorRef = system.actorOf(Props[CountActor], "countActor")
